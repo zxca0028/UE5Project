@@ -14,6 +14,15 @@ UCLASS()
 class UE5PROJECT_API AMainCharacter : public ACharacter
 {
 	GENERATED_BODY()
+private:
+	enum class PLAYER_STATE : uint8
+	{
+		IDLE,
+		JUMP,
+		LAND,
+		WALK
+	};
+	PLAYER_STATE eState = PLAYER_STATE::IDLE;
 public:
 	UPROPERTY(Category = "AnimationValue", EditAnywhere, BlueprintReadWrite)
 	PLAYER_ANISTATE aniState = PLAYER_ANISTATE::IDLE;
@@ -47,5 +56,4 @@ private:
 	void Move(const FInputActionInstance& inst);
 	void Look(const FInputActionInstance& inst);
 	void Jump() override;
-	void StopJumping() override;
 };

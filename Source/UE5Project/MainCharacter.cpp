@@ -28,12 +28,73 @@ void AMainCharacter::BeginPlay()
 			subsystem->AddMappingContext(DefalutIMC, 0);
 		}
 	}
+
+	eState = PLAYER_STATE::IDLE;
 }
 
 // Called every frame
 void AMainCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	auto v = GetVelocity();
+
+	UE_LOG(LogTemp, Warning, TEXT("X : %.3f, Y : %.3f, Z : %.3f"), v.X, v.Y, v.Z);
+
+
+	switch (eState)
+	{
+	case AMainCharacter::PLAYER_STATE::IDLE:
+		aniState = PLAYER_ANISTATE::IDLE;
+		break;
+
+	case AMainCharacter::PLAYER_STATE::JUMP:
+
+		if (v.Z >= 0.01f)
+		{
+			aniState = PLAYER_ANISTATE::JUMP;
+		}
+		else if (v.Z <= -0.01f)
+		{
+			aniState = PLAYER_ANISTATE::LAND;
+
+		}
+		else
+		{
+			if (abs(v.X) >= 0.01f || abs(v.Y) >= 0.01f)
+			{
+				eState = PLAYER_STATE::WALK;
+			}
+			else
+			{
+				eState = PLAYER_STATE::IDLE;
+			}
+		}
+
+		break;
+	case AMainCharacter::PLAYER_STATE::LAND:
+		aniState = PLAYER_ANISTATE::LAND;
+		break;
+
+	case AMainCharacter::PLAYER_STATE::WALK:
+
+		if (abs(v.Z) >= 0.01f)
+		{
+			break;
+		}
+
+		aniState = PLAYER_ANISTATE::WALK;
+
+		if (v.X <= 0.01f && v.Y <= 0.01f)
+		{
+			eState = PLAYER_STATE::IDLE;
+		}
+
+		break;
+
+	default:
+		break;
+	}
 }
 
 // Called to bind functionality to input
@@ -45,7 +106,6 @@ void AMainCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	if (nullptr != input)
 	{
 		input->BindAction(JumpAction, ETriggerEvent::Triggered, this, &AMainCharacter::Jump);
-		input->BindAction(JumpAction, ETriggerEvent::Completed, this, &AMainCharacter::StopJumping);
 
 		input->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AMainCharacter::Move);
 		
@@ -66,6 +126,11 @@ void AMainCharacter::Move(const FInputActionInstance& inst)
 
 		AddMovementInput(forward, movementVector.Y);
 		AddMovementInput(right,   movementVector.X);
+
+		if (eState != PLAYER_STATE::JUMP)
+		{
+			eState = PLAYER_STATE::WALK;
+		}
 	}
 }
 
@@ -84,13 +149,7 @@ void AMainCharacter::Jump()
 {
 	Super::Jump();
 
-	aniState = PLAYER_ANISTATE::JUMP;
+	eState = PLAYER_STATE::JUMP;
+
+	UE_LOG(LogTemp, Warning, TEXT("계속들어옴?"));
 }
-
-void AMainCharacter::StopJumping()
-{
-	Super::StopJumping();
-
-	aniState = PLAYER_ANISTATE::LAND;
-}
-

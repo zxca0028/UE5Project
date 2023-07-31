@@ -22,3 +22,15 @@ enum class PLAYER_STATE : uint8
 	LAND,
 	WALK
 };
+
+UENUM(BlueprintType)
+enum class MONSTER_STATE : uint8
+{
+	IDLE,
+	ATTACK,
+	HIT,
+	CHASE,
+	PATROL,
+	RETURN,
+	DEATH
+};

@@ -13,3 +13,12 @@ enum class PLAYER_ANISTATE : uint8
 	LAND,
 	ATTACK
 };
+
+UENUM(BlueprintType)
+enum class PLAYER_STATE : uint8
+{
+	IDLE,
+	JUMP,
+	LAND,
+	WALK
+};

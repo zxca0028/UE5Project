@@ -14,6 +14,8 @@ UCLASS()
 class UE5PROJECT_API UMainCharacterAnimInstance : public UAnimInstance
 {
 	GENERATED_BODY()
+private:
+	class UAnimMontage* currMontage = nullptr;
 protected:
 	void NativeBeginPlay() override;
 	void NativeUpdateAnimation(float deltaTime) override;

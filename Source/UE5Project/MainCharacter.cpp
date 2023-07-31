@@ -38,45 +38,39 @@ void AMainCharacter::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	auto v = GetVelocity();
-
-	UE_LOG(LogTemp, Warning, TEXT("X : %.3f, Y : %.3f, Z : %.3f"), v.X, v.Y, v.Z);
+	
+	//UE_LOG(LogTemp, Warning, TEXT("X : %.3f, Y : %.3f, Z : %.3f"), v.X, v.Y, v.Z);
 
 
 	switch (eState)
 	{
-	case AMainCharacter::PLAYER_STATE::IDLE:
+	case PLAYER_STATE::IDLE:
 		aniState = PLAYER_ANISTATE::IDLE;
 		break;
 
-	case AMainCharacter::PLAYER_STATE::JUMP:
+	case PLAYER_STATE::JUMP:
 
-		if (v.Z >= 0.01f)
+		if (abs(v.Z) >= 0.01f)
 		{
 			aniState = PLAYER_ANISTATE::JUMP;
 		}
-		else if (v.Z <= -0.01f)
-		{
-			aniState = PLAYER_ANISTATE::LAND;
-
-		}
 		else
 		{
-			if (abs(v.X) >= 0.01f || abs(v.Y) >= 0.01f)
+			/*if (abs(v.X) >= 0.01f || abs(v.Y) >= 0.01f)
 			{
 				eState = PLAYER_STATE::WALK;
 			}
 			else
 			{
-				eState = PLAYER_STATE::IDLE;
-			}
+			}*/
+				eState = PLAYER_STATE::LAND;
 		}
 
 		break;
-	case AMainCharacter::PLAYER_STATE::LAND:
+	case PLAYER_STATE::LAND:
 		aniState = PLAYER_ANISTATE::LAND;
 		break;
-
-	case AMainCharacter::PLAYER_STATE::WALK:
+	case PLAYER_STATE::WALK:
 
 		if (abs(v.Z) >= 0.01f)
 		{
@@ -130,6 +124,8 @@ void AMainCharacter::Move(const FInputActionInstance& inst)
 		if (eState != PLAYER_STATE::JUMP)
 		{
 			eState = PLAYER_STATE::WALK;
+			//UE_LOG(LogTemp, Warning, TEXT("계속들어옴?"));
+
 		}
 	}
 }
@@ -151,5 +147,5 @@ void AMainCharacter::Jump()
 
 	eState = PLAYER_STATE::JUMP;
 
-	UE_LOG(LogTemp, Warning, TEXT("계속들어옴?"));
+	//UE_LOG(LogTemp, Warning, TEXT("계속들어옴?"));
 }

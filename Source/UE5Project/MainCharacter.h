@@ -14,14 +14,7 @@ UCLASS()
 class UE5PROJECT_API AMainCharacter : public ACharacter
 {
 	GENERATED_BODY()
-private:
-	enum class PLAYER_STATE : uint8
-	{
-		IDLE,
-		JUMP,
-		LAND,
-		WALK
-	};
+public:
 	PLAYER_STATE eState = PLAYER_STATE::IDLE;
 public:
 	UPROPERTY(Category = "AnimationValue", EditAnywhere, BlueprintReadWrite)

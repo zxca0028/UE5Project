@@ -8,7 +8,7 @@ void UMainCharacterAnimInstance::NativeBeginPlay()
 {
 	Super::NativeBeginPlay();
 
-	OnMontageEnded.AddDynamic(this, &UMainCharacterAnimInstance::MontageEnd);
+	OnMontageBlendingOut.AddDynamic(this, &UMainCharacterAnimInstance::MontageEnd);
 
 	AMainCharacter* character = Cast<AMainCharacter>(GetOwningActor());
 
@@ -34,6 +34,13 @@ void UMainCharacterAnimInstance::NativeUpdateAnimation(float deltaTime)
 
 	if (false == Montage_IsPlaying(montage))
 	{
+		if (montage == currMontage && montage->bLoop == true)
+		{
+			return;
+		}
+
+		UE_LOG(LogTemp, Error, TEXT("state: %d"), static_cast<int>(aniState));
+		currMontage = montage;
 		Montage_Play(montage, 1.0f);
 	}
 }
@@ -43,4 +50,9 @@ void UMainCharacterAnimInstance::MontageEnd(UAnimMontage* _anim, bool _inter)
 	TSubclassOf<UMainCharacterAnimInstance> instance = UMainCharacterAnimInstance::StaticClass();
 
 	AMainCharacter* character = Cast< AMainCharacter>(GetOwningActor());
+
+	if (allAnimations[PLAYER_ANISTATE::LAND] == _anim)
+	{
+		character->eState = PLAYER_STATE::IDLE;
+	}
 }

@@ -39,7 +39,6 @@ void UMainCharacterAnimInstance::NativeUpdateAnimation(float deltaTime)
 			return;
 		}
 
-		UE_LOG(LogTemp, Error, TEXT("state: %d"), static_cast<int>(aniState));
 		currMontage = montage;
 		Montage_Play(montage, 1.0f);
 	}
@@ -51,8 +50,10 @@ void UMainCharacterAnimInstance::MontageEnd(UAnimMontage* _anim, bool _inter)
 
 	AMainCharacter* character = Cast< AMainCharacter>(GetOwningActor());
 
-	if (allAnimations[PLAYER_ANISTATE::LAND] == _anim)
+	if (allAnimations[PLAYER_ANISTATE::LAND] == _anim ||
+		allAnimations[PLAYER_ANISTATE::ATTACK1] == _anim )
 	{
 		character->eState = PLAYER_STATE::IDLE;
 	}
+
 }

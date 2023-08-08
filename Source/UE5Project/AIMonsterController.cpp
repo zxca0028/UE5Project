@@ -17,7 +17,7 @@ void AAIMonsterController::OnPossess(APawn* _inPawn)
 {
 	Super::OnPossess(_inPawn);
 
-	if (true != behaviorTreeComponent->IsValidLowLevel() && nullptr != blackboardComponent)
+	if (nullptr != behaviorTreeComponent && true == behaviorTreeComponent->IsValidLowLevel())
 	{
 		AAICharacter* aiPawn = Cast<AAICharacter>(_inPawn);
 

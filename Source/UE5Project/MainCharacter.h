@@ -45,8 +45,11 @@ public:
 	class UInputAction* MoveAction = nullptr;
 	UPROPERTY(EditAnywhere, Category = "Input")
 	class UInputAction* LookAction = nullptr;
+	UPROPERTY(EditAnywhere, Category = "Input")
+	class UInputAction* AttackAction = nullptr;
 private:
 	void Move(const FInputActionInstance& inst);
 	void Look(const FInputActionInstance& inst);
 	void Jump() override;
+	void Attack();
 };

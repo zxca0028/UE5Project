@@ -6,6 +6,11 @@
 #include "GlobalGameInstance.h"
 #include "BehaviorTree/BlackboardComponent.h"
 
+AAIMonster::AAIMonster()
+{
+	Tags.Add(TEXT("Monster"));
+}
+
 void AAIMonster::BeginPlay()
 {
 	UGlobalGameInstance* instance = GetWorld()->GetGameInstance<UGlobalGameInstance>();
@@ -20,7 +25,7 @@ void AAIMonster::BeginPlay()
 
 	Super::BeginPlay();
 
-	GetBlackboardCompoent()->SetValueAsEnum(TEXT("AISTATE"), static_cast<int>(MONSTER_STATE::IDLE));
+	GetBlackboardCompoent()->SetValueAsEnum(TEXT("AIState"), static_cast<int>(MONSTER_STATE::IDLE));
 	GetBlackboardCompoent()->SetValueAsString(TEXT("TargetTag"), TEXT("Player"));
 	GetBlackboardCompoent()->SetValueAsFloat(TEXT("SearchRange"), 1500.f);
 	GetBlackboardCompoent()->SetValueAsFloat(TEXT("AttackRange"), 200.f);

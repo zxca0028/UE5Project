@@ -11,7 +11,7 @@ AMainCharacter::AMainCharacter()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
+	Tags.Add(TEXT("Player"));
 }
 
 // Called when the game starts or when spawned
@@ -44,6 +44,18 @@ void AMainCharacter::Tick(float DeltaTime)
 
 	switch (eState)
 	{
+	case PLAYER_STATE::ATTACK1:
+		aniState = PLAYER_ANISTATE::ATTACK1;
+		break;
+	case PLAYER_STATE::ATTACK2:
+		aniState = PLAYER_ANISTATE::ATTACK2;
+		break;
+	case PLAYER_STATE::ATTACK3:
+		aniState = PLAYER_ANISTATE::ATTACK3;
+		break;
+	case PLAYER_STATE::ATTACK4:
+		aniState = PLAYER_ANISTATE::ATTACK4;
+		break;
 	case PLAYER_STATE::IDLE:
 		aniState = PLAYER_ANISTATE::IDLE;
 		break;
@@ -56,20 +68,15 @@ void AMainCharacter::Tick(float DeltaTime)
 		}
 		else
 		{
-			/*if (abs(v.X) >= 0.01f || abs(v.Y) >= 0.01f)
-			{
-				eState = PLAYER_STATE::WALK;
-			}
-			else
-			{
-			}*/
-				eState = PLAYER_STATE::LAND;
+			eState = PLAYER_STATE::LAND;
 		}
 
 		break;
+
 	case PLAYER_STATE::LAND:
 		aniState = PLAYER_ANISTATE::LAND;
 		break;
+
 	case PLAYER_STATE::WALK:
 
 		if (abs(v.Z) >= 0.01f)
@@ -100,15 +107,19 @@ void AMainCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	if (nullptr != input)
 	{
 		input->BindAction(JumpAction, ETriggerEvent::Triggered, this, &AMainCharacter::Jump);
-
 		input->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AMainCharacter::Move);
-		
 		input->BindAction(LookAction, ETriggerEvent::Triggered, this, &AMainCharacter::Look);
+		input->BindAction(AttackAction, ETriggerEvent::Triggered, this, &AMainCharacter::Attack);
 	}
 }
 
 void AMainCharacter::Move(const FInputActionInstance& inst)
 {
+	if (eState == PLAYER_STATE::JUMP)
+	{
+		return;
+	}
+
 	FVector2D movementVector = inst.GetValue().Get<FVector2D>();
 
 	if (nullptr != Controller)
@@ -123,9 +134,10 @@ void AMainCharacter::Move(const FInputActionInstance& inst)
 
 		if (eState != PLAYER_STATE::JUMP)
 		{
-			eState = PLAYER_STATE::WALK;
-			//UE_LOG(LogTemp, Warning, TEXT("계속들어옴?"));
-
+			if (eState != PLAYER_STATE::LAND)
+			{
+				eState = PLAYER_STATE::WALK;
+			}
 		}
 	}
 }
@@ -147,5 +159,31 @@ void AMainCharacter::Jump()
 
 	eState = PLAYER_STATE::JUMP;
 
-	//UE_LOG(LogTemp, Warning, TEXT("계속들어옴?"));
+	UE_LOG(LogTemp, Error, TEXT("JUMP!!!!!"));
+}
+
+void AMainCharacter::Attack()
+{
+
+	if (eState == PLAYER_STATE::ATTACK1)
+	{
+		UE_LOG(LogTemp, Error, TEXT("ATTACK2"));
+		eState = PLAYER_STATE::ATTACK2;
+		return;
+	}
+	else if (eState == PLAYER_STATE::ATTACK2)
+	{
+		UE_LOG(LogTemp, Error, TEXT("ATTACK3"));
+		eState = PLAYER_STATE::ATTACK3;
+		return;
+	}
+	else if (eState == PLAYER_STATE::ATTACK3)
+	{
+		UE_LOG(LogTemp, Error, TEXT("ATTACK4"));
+		eState = PLAYER_STATE::ATTACK4;
+		return;
+	}
+
+	eState = PLAYER_STATE::ATTACK1;
+	UE_LOG(LogTemp, Error, TEXT("ATTACK1"));
 }

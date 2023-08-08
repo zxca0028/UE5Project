@@ -15,6 +15,8 @@ UCLASS()
 class UE5PROJECT_API AAIMonster : public AAICharacter
 {
 	GENERATED_BODY()
+public:
+	AAIMonster();
 private:
 	const struct FMonsterData* currMonsterData;
 public:

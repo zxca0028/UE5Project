@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "BehaviorTree/Tasks/BTTask_BlackboardBase.h"
 #include "Enum.h"
+#include "GlobalCharacter.h"
 #include <BehaviorTree/BlackboardComponent.h>
 #include "BTTask_AIBase.generated.h"
 
@@ -36,6 +37,8 @@ public:
 	class AGlobalCharacter* GetGlobalCharacter(UBehaviorTreeComponent& ownerComp);
 	class AActor* GetTargetSearch(UBehaviorTreeComponent& ownerComp);
 	class UBlackboardComponent* GetBlackboardComponent(UBehaviorTreeComponent& ownerComp);
+
+
 
 	EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& ownerComp, uint8* nodeMemory) override;
 

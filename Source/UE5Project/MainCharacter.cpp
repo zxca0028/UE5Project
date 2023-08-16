@@ -3,6 +3,7 @@
 
 #include "MainCharacter.h"
 #include "InputActionValue.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 
@@ -29,7 +30,7 @@ void AMainCharacter::BeginPlay()
 		}
 	}
 
-	eState = PLAYER_STATE::IDLE;
+	aniState = PLAYER_ANISTATE::IDLE;
 }
 
 // Called every frame
@@ -37,62 +38,46 @@ void AMainCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	auto v = GetVelocity();
-	
-	//UE_LOG(LogTemp, Warning, TEXT("X : %.3f, Y : %.3f, Z : %.3f"), v.X, v.Y, v.Z);
+	vel = GetVelocity();
 
+	GetCharacterMovement()->MaxWalkSpeed;
 
-	switch (eState)
+	switch (aniState)
 	{
-	case PLAYER_STATE::ATTACK1:
-		aniState = PLAYER_ANISTATE::ATTACK1;
+	case PLAYER_ANISTATE::IDLE:
 		break;
-	case PLAYER_STATE::ATTACK2:
-		aniState = PLAYER_ANISTATE::ATTACK2;
-		break;
-	case PLAYER_STATE::ATTACK3:
-		aniState = PLAYER_ANISTATE::ATTACK3;
-		break;
-	case PLAYER_STATE::ATTACK4:
-		aniState = PLAYER_ANISTATE::ATTACK4;
-		break;
-	case PLAYER_STATE::IDLE:
-		aniState = PLAYER_ANISTATE::IDLE;
-		break;
-
-	case PLAYER_STATE::JUMP:
-
-		if (abs(v.Z) >= 0.01f)
+	case PLAYER_ANISTATE::WALK:
+		if (vel.IsZero())
 		{
-			aniState = PLAYER_ANISTATE::JUMP;
-		}
-		else
-		{
-			eState = PLAYER_STATE::LAND;
-		}
-
-		break;
-
-	case PLAYER_STATE::LAND:
-		aniState = PLAYER_ANISTATE::LAND;
-		break;
-
-	case PLAYER_STATE::WALK:
-
-		if (abs(v.Z) >= 0.01f)
-		{
+			aniState = PLAYER_ANISTATE::IDLE;
 			break;
 		}
-
-		aniState = PLAYER_ANISTATE::WALK;
-
-		if (v.X <= 0.01f && v.Y <= 0.01f)
-		{
-			eState = PLAYER_STATE::IDLE;
-		}
-
+		GetCharacterMovement()->MaxWalkSpeed = fSpeed * (isDash + 1.f);
 		break;
-
+	case PLAYER_ANISTATE::DASH:
+		if (vel.IsZero())
+		{
+			aniState = PLAYER_ANISTATE::IDLE;
+			break;
+		}
+		GetCharacterMovement()->MaxWalkSpeed = fSpeed * (isDash + 1.f);
+		break;
+	case PLAYER_ANISTATE::JUMP:
+		if (vel.IsZero())
+		{
+			aniState = PLAYER_ANISTATE::LAND;
+		}
+		break;
+	case PLAYER_ANISTATE::LAND:
+		break;
+	case PLAYER_ANISTATE::ATTACK1:
+		break;
+	case PLAYER_ANISTATE::ATTACK2:
+		break;
+	case PLAYER_ANISTATE::ATTACK3:
+		break;
+	case PLAYER_ANISTATE::ATTACK4:
+		break;
 	default:
 		break;
 	}
@@ -110,12 +95,13 @@ void AMainCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 		input->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AMainCharacter::Move);
 		input->BindAction(LookAction, ETriggerEvent::Triggered, this, &AMainCharacter::Look);
 		input->BindAction(AttackAction, ETriggerEvent::Triggered, this, &AMainCharacter::Attack);
+		input->BindAction(DashAction, ETriggerEvent::Triggered, this, &AMainCharacter::Dash);
 	}
 }
 
 void AMainCharacter::Move(const FInputActionInstance& inst)
 {
-	if (eState == PLAYER_STATE::JUMP)
+	if (aniState == PLAYER_ANISTATE::JUMP)
 	{
 		return;
 	}
@@ -132,13 +118,7 @@ void AMainCharacter::Move(const FInputActionInstance& inst)
 		AddMovementInput(forward, movementVector.Y);
 		AddMovementInput(right,   movementVector.X);
 
-		if (eState != PLAYER_STATE::JUMP)
-		{
-			if (eState != PLAYER_STATE::LAND)
-			{
-				eState = PLAYER_STATE::WALK;
-			}
-		}
+		aniState = PLAYER_ANISTATE::WALK;
 	}
 }
 
@@ -157,33 +137,40 @@ void AMainCharacter::Jump()
 {
 	Super::Jump();
 
-	eState = PLAYER_STATE::JUMP;
+	aniState = PLAYER_ANISTATE::JUMP;
+}
 
-	UE_LOG(LogTemp, Error, TEXT("JUMP!!!!!"));
+void AMainCharacter::Dash(const FInputActionInstance& inst)
+{
+	if (aniState == PLAYER_ANISTATE::JUMP)
+	{
+		return;
+	}
+
+	isDash = inst.GetValue().Get<float>();
+
+	if (!vel.IsZero())
+	{
+		aniState = PLAYER_ANISTATE::DASH;
+	}
 }
 
 void AMainCharacter::Attack()
 {
-
-	if (eState == PLAYER_STATE::ATTACK1)
+	if (aniState == PLAYER_ANISTATE::ATTACK1)
 	{
-		UE_LOG(LogTemp, Error, TEXT("ATTACK2"));
-		eState = PLAYER_STATE::ATTACK2;
-		return;
+		aniState = PLAYER_ANISTATE::ATTACK2;
 	}
-	else if (eState == PLAYER_STATE::ATTACK2)
+	else if (aniState == PLAYER_ANISTATE::ATTACK2)
 	{
-		UE_LOG(LogTemp, Error, TEXT("ATTACK3"));
-		eState = PLAYER_STATE::ATTACK3;
-		return;
+		aniState = PLAYER_ANISTATE::ATTACK3;
 	}
-	else if (eState == PLAYER_STATE::ATTACK3)
+	else if (aniState == PLAYER_ANISTATE::ATTACK3)
 	{
-		UE_LOG(LogTemp, Error, TEXT("ATTACK4"));
-		eState = PLAYER_STATE::ATTACK4;
-		return;
+		aniState = PLAYER_ANISTATE::ATTACK4;
 	}
-
-	eState = PLAYER_STATE::ATTACK1;
-	UE_LOG(LogTemp, Error, TEXT("ATTACK1"));
+	else
+	{ 
+		aniState = PLAYER_ANISTATE::ATTACK1;
+	}
 }

@@ -4,6 +4,7 @@
 #include "AIMonster.h"
 #include "MonsterData.h"
 #include "GlobalGameInstance.h"
+#include "Components/CapsuleComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
 
 AAIMonster::AAIMonster()
@@ -21,6 +22,7 @@ void AAIMonster::BeginPlay()
 
 		SetAllAnimation<MONSTER_STATE>(currMonsterData->MapAnimation);
 		SetAniState<MONSTER_STATE>(MONSTER_STATE::IDLE);
+		SetHP(currMonsterData->HP);
 	}
 
 	Super::BeginPlay();
@@ -30,4 +32,18 @@ void AAIMonster::BeginPlay()
 	GetBlackboardCompoent()->SetValueAsFloat(TEXT("SearchRange"), 1500.f);
 	GetBlackboardCompoent()->SetValueAsFloat(TEXT("AttackRange"), 200.f);
 	GetBlackboardCompoent()->SetValueAsVector(TEXT("OriginPos"), GetActorLocation());
+	GetBlackboardCompoent()->SetValueAsInt(TEXT("HP"), iHP);
+
+	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &AAIMonster::BeginMonsterOverLap);
+	/*
+	UActorComponent* test = GetComponentsByTag(UCapsuleComponent::StaticClass(), TEXT("Monster"))[0];
+
+	Cast<UCapsuleComponent>(test)->OnComponentBeginOverlap.AddDynamic(this, &AAIMonster::BeginMonsterOverLap);*/
+}
+
+void AAIMonster::BeginMonsterOverLap(UPrimitiveComponent* overlappedComponent, AActor* otherActor, UPrimitiveComponent* otherComp, int32 otherBodyIndex, bool bFromSweep, const FHitResult& sweepResult)
+{
+	iHP -= 1;
+
+	GetBlackboardCompoent()->SetValueAsInt(TEXT("HP"), iHP);
 }

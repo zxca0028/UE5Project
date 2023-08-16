@@ -24,4 +24,15 @@ public:
 private:
 	UPROPERTY(Category = "Animation", EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	FName dataName = "NONE";
+private:
+	UFUNCTION()
+		void BeginMonsterOverLap
+		(
+			UPrimitiveComponent* overlappedComponent,
+			AActor* otherActor,
+			UPrimitiveComponent* otherComp,
+			int32 otherBodyIndex,
+			bool bFromSweep,
+			const FHitResult& sweepResult
+		);
 };

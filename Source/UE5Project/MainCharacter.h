@@ -15,8 +15,6 @@ class UE5PROJECT_API AMainCharacter : public ACharacter
 {
 	GENERATED_BODY()
 public:
-	PLAYER_STATE eState = PLAYER_STATE::IDLE;
-public:
 	UPROPERTY(Category = "AnimationValue", EditAnywhere, BlueprintReadWrite)
 	PLAYER_ANISTATE aniState = PLAYER_ANISTATE::IDLE;
 
@@ -47,9 +45,16 @@ public:
 	class UInputAction* LookAction = nullptr;
 	UPROPERTY(EditAnywhere, Category = "Input")
 	class UInputAction* AttackAction = nullptr;
+	UPROPERTY(EditAnywhere, Category = "Input")
+	class UInputAction* DashAction   = nullptr;
 private:
 	void Move(const FInputActionInstance& inst);
 	void Look(const FInputActionInstance& inst);
 	void Jump() override;
+	void Dash(const FInputActionInstance& inst);
 	void Attack();
+private:
+	float isDash;
+	FVector vel;
+	float fSpeed = 300.f;
 };

@@ -10,6 +10,13 @@ UCLASS()
 class UE5PROJECT_API AGlobalCharacter : public ACharacter
 {
 	GENERATED_BODY()
+protected:
+	int iHP = 0;
+public:
+	void SetHP(int _hp)
+	{
+		iHP = _hp;
+	}
 private:
 	UPROPERTY(Category = "GameModeValue", EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	int aniState = 0;
@@ -34,8 +41,9 @@ public:
 	template<typename EnumType>
 	class UAnimMontage* GetAnimMontage(EnumType _index)
 	{
-		return GetAnimMontage(static_cast<int8>(_index));
+		return GetAnimMontage(static_cast<int>(_index));
 	}
+
 	class UAnimMontage* GetAnimMontage(int _index)
 	{
 		if (false == allAnimation.Contains(_index))

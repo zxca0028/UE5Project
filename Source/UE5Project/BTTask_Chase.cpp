@@ -32,5 +32,13 @@ void UBTTask_Chase::TickTask(UBehaviorTreeComponent& ownerComp, uint8* nodeMemor
 
 	GetGlobalCharacter(ownerComp)->AddMovementInput(dir);
 
+	int tt = GetBlackboardComponent(ownerComp)->GetValueAsInt(TEXT("HP"));
+
+	if (0 >= GetBlackboardComponent(ownerComp)->GetValueAsInt(TEXT("HP")))
+	{
+		SetStateChange(ownerComp, MONSTER_STATE::DEATH);
+		return;
+	}
+
 	return;
 }

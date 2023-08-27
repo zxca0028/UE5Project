@@ -92,19 +92,21 @@ void AMainCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	if (nullptr != input)
 	{
 		input->BindAction(JumpAction, ETriggerEvent::Triggered, this, &AMainCharacter::Jump);
+		input->BindAction(AttackAction, ETriggerEvent::Triggered, this, &AMainCharacter::Attack);
 		input->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AMainCharacter::Move);
 		input->BindAction(LookAction, ETriggerEvent::Triggered, this, &AMainCharacter::Look);
-		input->BindAction(AttackAction, ETriggerEvent::Triggered, this, &AMainCharacter::Attack);
 		input->BindAction(DashAction, ETriggerEvent::Triggered, this, &AMainCharacter::Dash);
 	}
 }
 
 void AMainCharacter::Move(const FInputActionInstance& inst)
 {
-	if (aniState == PLAYER_ANISTATE::JUMP)
+	if (aniState == PLAYER_ANISTATE::JUMP || true == bAttacking)
 	{
 		return;
 	}
+
+	isDash = false;
 
 	FVector2D movementVector = inst.GetValue().Get<FVector2D>();
 
@@ -142,7 +144,7 @@ void AMainCharacter::Jump()
 
 void AMainCharacter::Dash(const FInputActionInstance& inst)
 {
-	if (aniState == PLAYER_ANISTATE::JUMP)
+	if (aniState == PLAYER_ANISTATE::JUMP || true == bAttacking)
 	{
 		return;
 	}
@@ -157,20 +159,33 @@ void AMainCharacter::Dash(const FInputActionInstance& inst)
 
 void AMainCharacter::Attack()
 {
+	if (true == bTest)
+	{
+		return;
+	}
+
 	if (aniState == PLAYER_ANISTATE::ATTACK1)
 	{
 		aniState = PLAYER_ANISTATE::ATTACK2;
+		bTest = true;
+		bAttacking = true;
 	}
 	else if (aniState == PLAYER_ANISTATE::ATTACK2)
 	{
 		aniState = PLAYER_ANISTATE::ATTACK3;
+		bTest = true;
+		bAttacking = true;
 	}
 	else if (aniState == PLAYER_ANISTATE::ATTACK3)
 	{
 		aniState = PLAYER_ANISTATE::ATTACK4;
+		bTest = true;
+		bAttacking = true;
 	}
 	else
 	{ 
 		aniState = PLAYER_ANISTATE::ATTACK1;
+		bAttacking = true;
+		bTest = true;
 	}
 }

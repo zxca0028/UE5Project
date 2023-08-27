@@ -27,4 +27,7 @@ public:
 
 	UFUNCTION()
 	void MontageEnd(UAnimMontage* _anim, bool _inter);
+
+	UFUNCTION()
+	void AnimNotify_COMBO();
 };

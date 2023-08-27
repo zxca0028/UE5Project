@@ -6,6 +6,8 @@
 #include "BehaviorTree/Tasks/BTTask_BlackboardBase.h"
 #include "Enum.h"
 #include "GlobalCharacter.h"
+#include "NavigationSystem.h"
+#include "NavigationPath.h"
 #include <BehaviorTree/BlackboardComponent.h>
 #include "BTTask_AIBase.generated.h"
 
@@ -38,9 +40,10 @@ public:
 	class AActor* GetTargetSearch(UBehaviorTreeComponent& ownerComp);
 	class UBlackboardComponent* GetBlackboardComponent(UBehaviorTreeComponent& ownerComp);
 
-
-
 	EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& ownerComp, uint8* nodeMemory) override;
 
 	virtual void TickTask(UBehaviorTreeComponent& ownerComp, uint8* nodeMemory, float deltaSeconds) override;
+
+	TArray<FVector> PathFind(UBehaviorTreeComponent& ownerComp, AActor* targetActor);
+	TArray<FVector> PathFind(UBehaviorTreeComponent& ownerComp, FVector targetPoint);
 };

@@ -151,10 +151,40 @@ void UBTTask_AIBase::TickTask(UBehaviorTreeComponent& ownerComp, uint8* nodeMemo
 {
 	UBlackboardComponent* blackBoard = GetBlackboardComponent(ownerComp);
 
+	if (blackBoard->GetValueAsInt(TEXT("HP")) <= 0 && blackBoard->GetValueAsEnum(TEXT("AIState")) != static_cast<uint8>(MONSTER_STATE::DEATH))
+	{
+		SetStateChange(ownerComp, MONSTER_STATE::DEATH);
+		return;
+	}
+
 	float stateTime = blackBoard->GetValueAsFloat(TEXT("StateTime"));
 	stateTime += deltaSeconds;
 	blackBoard->SetValueAsFloat(TEXT("StateTime"), stateTime);
 
 	AActor* resultActor = GetTargetSearch(ownerComp);
 	GetBlackboardComponent(ownerComp)->SetValueAsObject(TEXT("TargetActor"), resultActor);
+}
+
+TArray<FVector> UBTTask_AIBase::PathFind(UBehaviorTreeComponent& ownerComp, AActor* targetActor)
+{
+	return PathFind(ownerComp, targetActor->GetActorLocation());
+}
+
+TArray<FVector> UBTTask_AIBase::PathFind(UBehaviorTreeComponent& ownerComp, FVector targetPoint)
+{
+	UNavigationPath* path = nullptr;
+	FVector startPos = GetGlobalCharacter(ownerComp)->GetActorLocation();
+
+	path = UNavigationSystemV1::FindPathToLocationSynchronously(GetWorld(), startPos, targetPoint);
+
+	if (nullptr == path)
+	{
+		return TArray<FVector>();
+	}
+	if (false == path->IsValid())
+	{
+		return TArray<FVector>();
+	}
+
+	return path->PathPoints;
 }

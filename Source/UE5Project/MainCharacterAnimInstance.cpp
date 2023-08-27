@@ -58,15 +58,26 @@ void UMainCharacterAnimInstance::MontageEnd(UAnimMontage* _anim, bool _inter)
 	if (_inter == false)
 	{
 		if (allAnimations[PLAYER_ANISTATE::LAND] == _anim ||
+			allAnimations[PLAYER_ANISTATE::DASH] == _anim ||
 			allAnimations[PLAYER_ANISTATE::ATTACK1] == _anim ||
 			allAnimations[PLAYER_ANISTATE::ATTACK2] == _anim ||
 			allAnimations[PLAYER_ANISTATE::ATTACK3] == _anim ||
 			allAnimations[PLAYER_ANISTATE::ATTACK4] == _anim
 			)
 		{
+			character->bTest = false;
+			character->bAttacking = false;
 			character->aniState = PLAYER_ANISTATE::IDLE;
 			aniState = PLAYER_ANISTATE::IDLE;
 			Montage_Play(allAnimations[aniState], 1.0f);
 		}
 	}
+}
+
+void UMainCharacterAnimInstance::AnimNotify_COMBO()
+{
+	AMainCharacter* character = Cast< AMainCharacter>(GetOwningActor());
+
+	character->bTest = false;
+	character->bAttacking = false;
 }

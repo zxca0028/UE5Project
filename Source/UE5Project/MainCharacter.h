@@ -15,6 +15,14 @@ class UE5PROJECT_API AMainCharacter : public ACharacter
 {
 	GENERATED_BODY()
 public:
+	bool bTest = false;
+public:
+	bool IsAttacking()
+	{
+		return bAttacking;
+	}
+	bool bAttacking = false;
+public:
 	UPROPERTY(Category = "AnimationValue", EditAnywhere, BlueprintReadWrite)
 	PLAYER_ANISTATE aniState = PLAYER_ANISTATE::IDLE;
 

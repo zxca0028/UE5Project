@@ -14,5 +14,16 @@ void UBTTask_Attack::TickTask(UBehaviorTreeComponent& ownerComp, uint8* nodeMemo
 {
 	Super::TickTask(ownerComp, nodeMemory, deltaSeconds);
 
+	AGlobalCharacter* character = GetGlobalCharacter(ownerComp);
+
+	UAnimMontage* montage = character->GetAnimMontage(GetAIState(ownerComp));
+	float time = montage->CalculateSequenceLength();
+
+	if (time <= GetStateTime(ownerComp))
+	{
+		SetStateChange(ownerComp, MONSTER_STATE::CHASE);
+		return;
+	}
+
 	return;
 }

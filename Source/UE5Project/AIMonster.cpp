@@ -3,6 +3,7 @@
 
 #include "AIMonster.h"
 #include "MonsterData.h"
+#include "MainCharacter.h"
 #include "GlobalGameInstance.h"
 #include "Components/CapsuleComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
@@ -29,7 +30,7 @@ void AAIMonster::BeginPlay()
 
 	GetBlackboardCompoent()->SetValueAsEnum(TEXT("AIState"), static_cast<int>(MONSTER_STATE::IDLE));
 	GetBlackboardCompoent()->SetValueAsString(TEXT("TargetTag"), TEXT("Player"));
-	GetBlackboardCompoent()->SetValueAsFloat(TEXT("SearchRange"), 1500.f);
+	GetBlackboardCompoent()->SetValueAsFloat(TEXT("SearchRange"), 3000.f);
 	GetBlackboardCompoent()->SetValueAsFloat(TEXT("AttackRange"), 200.f);
 	GetBlackboardCompoent()->SetValueAsVector(TEXT("OriginPos"), GetActorLocation());
 	GetBlackboardCompoent()->SetValueAsInt(TEXT("HP"), iHP);
@@ -43,6 +44,13 @@ void AAIMonster::BeginPlay()
 
 void AAIMonster::BeginMonsterOverLap(UPrimitiveComponent* overlappedComponent, AActor* otherActor, UPrimitiveComponent* otherComp, int32 otherBodyIndex, bool bFromSweep, const FHitResult& sweepResult)
 {
+	AMainCharacter* playerActor = Cast<AMainCharacter>(otherActor);
+
+	if (true != playerActor->IsAttacking())
+	{
+		return;
+	}
+
 	iHP -= 1;
 
 	GetBlackboardCompoent()->SetValueAsInt(TEXT("HP"), iHP);

@@ -30,13 +30,34 @@ void UBTTask_Chase::TickTask(UBehaviorTreeComponent& ownerComp, uint8* nodeMemor
 
 	FVector dir = targetPos - myPos;
 
-	GetGlobalCharacter(ownerComp)->AddMovementInput(dir);
 
-	int tt = GetBlackboardComponent(ownerComp)->GetValueAsInt(TEXT("HP"));
+	TArray<FVector> path = PathFind(ownerComp, resultTarget);
 
-	if (0 >= GetBlackboardComponent(ownerComp)->GetValueAsInt(TEXT("HP")))
+	if (path.Num() <= 1)
 	{
-		SetStateChange(ownerComp, MONSTER_STATE::DEATH);
+		SetStateChange(ownerComp, MONSTER_STATE::IDLE);
+		return;
+	}
+	else
+	{
+		FVector pathDir = path[1] - myPos;
+
+		GetGlobalCharacter(ownerComp)->AddMovementInput(pathDir);
+	}
+
+	//UE_LOG(LogTemp, Log, TEXT("%f"), dir.Length());
+
+	//int tt = GetBlackboardComponent(ownerComp)->GetValueAsInt(TEXT("HP"));
+
+	//if (0 >= GetBlackboardComponent(ownerComp)->GetValueAsInt(TEXT("HP")))
+	//{
+	//	SetStateChange(ownerComp, MONSTER_STATE::DEATH);
+	//	return;
+	//}
+
+	if (dir.Length() <= 100.f)
+	{
+		SetStateChange(ownerComp, MONSTER_STATE::ATTACK);
 		return;
 	}
 

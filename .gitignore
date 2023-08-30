@@ -396,12 +396,11 @@ SourceArt/**/*.png
 SourceArt/**/*.tga
 
 # Binary Files
-Binaries/*
 Plugins/*/Binaries/*
-UE5Project/Binaries/*
-UE5Project/Intermediate/*
-UE5Project/Platforms/*
-UE5Project/Saved/*
+Binaries/*
+Intermediate/*
+Platforms/*
+Saved/*
 UE5Project.sln
 
 # Builds

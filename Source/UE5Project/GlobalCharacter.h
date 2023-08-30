@@ -11,6 +11,7 @@ class UE5PROJECT_API AGlobalCharacter : public ACharacter
 {
 	GENERATED_BODY()
 protected:
+	UPROPERTY(Category = "GameModeValue", EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	int iHP = 0;
 public:
 	void SetHP(int _hp)

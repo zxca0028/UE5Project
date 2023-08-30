@@ -51,7 +51,10 @@ void AAIMonster::BeginMonsterOverLap(UPrimitiveComponent* overlappedComponent, A
 		return;
 	}
 
-	iHP -= 1;
+	if (iHP > 0)
+	{
+		iHP -= 1;
+	}
 
 	GetBlackboardCompoent()->SetValueAsInt(TEXT("HP"), iHP);
 }
